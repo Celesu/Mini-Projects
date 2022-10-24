@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+.display {
+    color: white;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: rgb(32, 30, 30);
+    border: 1px solid black;
+    font-size: 2em;
+}
+
+.the-operator {
+    color: rgb(255, 255, 255);
+    width: 100%;
+    height: 35px;
+    text-align: left;
+    line-height: 0.4;
+    font-size: 10px;
+    background-color: #302c2c;
+    padding: 0px 13px 20px ;
+    border: 1px solid rgb(54, 54, 54);
+}
+
+#operator {
+    color: rgb(215, 236, 20);
+    font-size: 30px;
+}
+
+.flex-container-column {
+    display: flex;
+    flex-direction: column;
+
+    /* supporting property */
+    /* max-width: 0 auto;  */
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: right;
+}
+
+.flex-container-row {
+    display: flex;
+}
+
+.button {
+    flex-basis: 25%; /* krn tombol ada 4*/
+
+    /* supporting property */
+    font-size: 1.5em;
+    text-align: center;
+    padding: 40px;
+    border: 1px solid black;
+    background: -webkit-linear-gradient(top, #faf2f2, rgb(235, 225, 225));
+    cursor: pointer;
+}
+
+
+.double {
+    flex-basis: 50%;
+}
+
+.operator,
+.negative,
+.equals {
+    background: -webkit-linear-gradient(top, rgb(202, 27, 27),rgb(226, 27, 37));
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 15px;
+}
+
+.button:hover{
+    font-weight: bold;
+}
+
+.history {
+    width: 80%;
+    margin: 30px auto 0 auto;
+    overflow: scroll;
+}
+
+.buttonRiwayat {
+    display: flex;
+    
+    width: 30%;
+    font-size: 1.05rem;
+    color: rgb(231, 231, 231);
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+
+    margin: 20px auto;
+    border: 1px solid rgb(114, 6, 6);
+    cursor: pointer;
+
+    background: -webkit-linear-gradient(top, rgb(214, 47, 47), rgb(141, 38, 38));
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 50px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    text-align: center;
+    padding: 16px;
+}
+
+th {
+    background-color: rgb(141, 5, 5);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #d2d2d2;
+}
+
+@media screen and (max-width: 513px) {
+    .button {
+        padding: 10px;
+    }
+    .history {
+        width: 100%;
+    }
+ }
