@@ -1,0 +1,117 @@
+SET search_path TO pizza_runner;
+
+-- 1. What are the standard ingredients for each pizza?
+-- 	  For pizza_id 1, Meatlovers, the standard ingredients are: Bacon, 
+-- 	  BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami and for
+-- 	  pizza_id 2, Vegetarian, the standard ingredients are: Cheese, Mushrooms, 
+-- 	  Onions, Peppers, Tomatoes, Tomato Sauce.
+
+DROP TABLE IF EXISTS base_ing;
+CREATE TABLE IF NOT EXISTS base_ing AS(
+SELECT pizza_id, UNNEST(string_to_array(toppings, ', '))::integer "topping_id"
+FROM pizza_recipes);
+
+SELECT bi.pizza_id, pn.pizza_name, string_agg(pt.topping_name, ', ' ORDER BY pt.topping_id) 
+FROM base_ing bi
+JOIN pizza_names pn ON pn.pizza_id = bi.pizza_id
+JOIN pizza_toppings pt ON pt.topping_id = bi.topping_id
+GROUP BY bi.pizza_id, pn.pizza_name
+ORDER BY bi.pizza_id;
+
+-- 2. What was the most commonly added extra?
+-- 	  The most commonly add extra was Bacon.
+
+SELECT * FROM customer_orders
+WHERE extras <> '' AND extras <> 'null';
+
+SELECT * FROM pizza_toppings
+WHERE topping_id = 1;
+
+-- 3. What was the most common exclusion?
+-- 	  The most common exclusion was Cheese.
+
+SELECT * FROM customer_orders
+WHERE exclusions <> '' and exclusions <> 'null';
+
+SELECT * FROM pizza_toppings
+WHERE topping_id = 4;
+
+-- 4. Generate an order item for each record in the customers_orders table in 
+-- 	  the format of one of the following:
+		-- Meat Lovers
+		-- Meat Lovers - Exclude Beef
+		-- Meat Lovers - Extra Bacon
+		-- Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
+
+DROP TABLE IF EXISTS customers_orders;
+CREATE TABLE IF NOT EXISTS customers_orders(
+	order_id SERIAL PRIMARY KEY,
+	pizza varchar NOT NULL,
+	exclusions varchar,
+	extras varchar
+);
+
+INSERT INTO
+		customers_orders(pizza, exclusions, extras)
+VALUES
+		('Meat Lovers', NULL, NULL),
+		('Meat Lovers', 'Beef', NULL),
+		('Meat Lovers', NULL, 'Bacon'),
+		('Meat Lovers', 'Cheese, Bacon', 'Mushroom, Peppers');
+		
+SELECT * FROM customers_orders;
+
+-- 5. Generate an alphabetically ordered comma separated ingredient list for each 
+-- 	  pizza order from the customer_orders table and add a 2x in front of any relevant 
+-- 	  ingredients
+		-- For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
+
+DELETE FROM customer_orders
+WHERE order_id IS NULL;
+
+ALTER TABLE customer_orders
+DROP COLUMN IF EXISTS ingredients,
+DROP COLUMN IF EXISTS indexx,
+ADD COLUMN IF NOT EXISTS ingredients VARCHAR;
+
+
+DROP TABLE IF EXISTS tmp_tab;
+CREATE TABLE IF NOT EXISTS tmp_tab AS(
+SELECT co.order_id, co.pizza_id, 
+	CASE WHEN co.extras NOT IN  ('null', '') THEN (co.extras || ', ' || pr.toppings)
+		 ELSE pr.toppings
+		END AS toppings, ROW_NUMBER() OVER(
+		ORDER BY co.order_id)
+FROM customer_orders co
+JOIN pizza_recipes pr ON co.pizza_id = pr.pizza_id
+);
+
+ALTER TABLE tmp_tab
+ALTER COLUMN toppings TYPE VARCHAR;
+
+-- select column_name, data_type from information_schema.columns
+-- where table_name='customer_orders';
+
+-- PR: BUAT ROW_NUMBER SUPAYA BISA DIPAKE UTK 'ON' DAN KEEP DALAM TABLE TSB.
+SELECT * FROM customer_orders;
+
+-- SELECT co.order_id, co.pizza_id, tt.toppings 
+-- FROM tmp_tab tt
+-- JOIN customer_orders co ON co.order_id = tt.order_id
+-- ORDER BY co.order_id, co.pizza_id;
+
+-- SELECT co.order_id, co.pizza_id, co.exclusions, tmp_tab.toppings,
+-- CASE WHEN co.exclusions IN (tmp_tab.toppings)
+-- 			THEN tmp_tab.toppings
+-- 	ELSE replace(tmp_tab.toppings::VARCHAR, co.exclusions, '')
+-- 	END AS toppingsa
+-- FROM customer_orders co
+-- JOIN tmp_tab ON co.order_id = tmp_tab.order_id
+-- ORDER BY co.order_id;
+
+-- SELECT bi.pizza_id, string_agg(pt.topping_name, ', ') toppings FROM base_ing bi
+-- JOIN pizza_toppings pt ON bi.topping_id = pt.topping_id
+-- GROUP BY bi.pizza_id
+-- ORDER BY bi.pizza_id;
+
+
