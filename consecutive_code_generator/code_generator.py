@@ -18,21 +18,25 @@ def code_generator(last_code=""):
 
     new_code = last_code[:i-1]
     tmp_new_code = last_code[i-1:]
+
     while '9' in tmp_new_code:
+      # print(tmp_new_code)
+      if tmp_new_code[0] == '9':
+        # print(tmp_new_code)
+        break
       for i, char_ in enumerate(tmp_new_code[::-1]):
         char_i = (len(tmp_new_code)-1) - i # index dari belakang; n,n-1,n-2, ..., 0
-        # print(char_i, char_)
         if char_ == '9' and char_i > 0:
           if tmp_new_code[char_i - 1] == '9':
             tmp_new_code = tmp_new_code[:char_i-1] + 'b' + 'b' + tmp_new_code[char_i+1:]
           else:
             tmp_new_code = tmp_new_code[:char_i-1] + code_str[code_str.index(tmp_new_code[char_i-1]) + 1] + 'b' + tmp_new_code[char_i+1:]
-          break
-    new_code += tmp_new_code
-  
+
+  new_code += tmp_new_code
+
   return new_code
 
-
-print(code_generator('999939991')) 
+print(code_generator('89'))
+print(code_generator('789'))
 print(code_generator(''))
-print(code_generator('99999'))
+print(code_generator('997899'))
