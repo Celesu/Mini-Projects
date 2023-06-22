@@ -6,11 +6,11 @@ def code_generator(last_code=""):
     return 'b'*(len(last_code)+1) # new_codenya
 
   for i in range(len(last_code)-1, -1, -1):
-    if last_code[i] == '9':
-      last_code = last_code[:i] + 'b' + last_code [i + 1:]
-    else:
+    if last_code[i] != '9':
       last_code = last_code[:i] + code_str[code_str.index(last_code[i]) + 1] + last_code[i + 1:]
       break
+    
+    last_code = last_code[:i] + 'b' + last_code [i + 1:]
       
   return last_code
 
